@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.20.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(node-samp-plugin)
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/deps/cmake")
 include(AddSAMPPlugin)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 14)
 include_directories(
     "${PROJECT_SOURCE_DIR}/deps/samp-plugin-sdk/src"
     "${PROJECT_SOURCE_DIR}/deps/sampgdk/src"
@@ -22,8 +22,8 @@ file(
     "${PROJECT_SOURCE_DIR}/src/*.cpp"
 )
 add_samp_plugin(nodesamp ${CPPS} plugin.def)
-file(
-    GLOB LIBS 
-    "${PROJECT_SOURCE_DIR}/deps/node/lib/*.lib"
-)
-target_link_libraries(nodesamp PUBLIC ${LIBS})
+if(WIN32)
+    target_link_libraries(nodesamp PUBLIC "${PROJECT_SOURCE_DIR}/deps/node/lib/libnode.lib")
+else()
+    target_link_libraries(nodesamp PUBLIC "${PROJECT_SOURCE_DIR}/deps/node/lib/libnode.so.93")
+endif()

@@ -1,16 +1,41 @@
 #include "amx.h"
 
 namespace nodesamp {
+    std::unordered_map<std::string, AMX_NATIVE> Amx::nativeCache = std::unordered_map<std::string, AMX_NATIVE>();
+
+    AMX_NATIVE Amx::getNative(std::string& name) {
+        AMX_NATIVE native;
+        auto it = Amx::nativeCache.find(name);
+        if(it != Amx::nativeCache.end())
+            native = it->second;
+        else {
+            native = sampgdk::FindNative(name.c_str());
+            if(native)
+                Amx::nativeCache[name] = native;
+        }
+        return native;
+    }
+
+    v8::Local<v8::Value> Amx::createCallNativeResultEmpty(const v8::FunctionCallbackInfo<v8::Value>& info) {
+        using namespace v8;
+        Isolate* isolate = info.GetIsolate();
+        Local<Context> context = isolate->GetCurrentContext();
+        Local<Array> result = Array::New(isolate);
+        Local<String> key = String::NewFromUtf8(isolate, "retval").ToLocalChecked();
+        result->Set(context, key, Integer::New(isolate, 0)).FromMaybe(false);
+        return result;
+    }
+
     void Amx::callNative(const v8::FunctionCallbackInfo<v8::Value>& info) {
         using namespace v8;
         Isolate* isolate = info.GetIsolate();
         HandleScope handleScope(isolate);
         if(!info[0]->IsString() || !info[0]->IsString())
-            return info.GetReturnValue().Set(Null(isolate));
+            return info.GetReturnValue().Set(Amx::createCallNativeResultEmpty(info));
         std::string name = *String::Utf8Value(isolate, info[0]);
-        AMX_NATIVE native = sampgdk::FindNative(name.c_str());
+        AMX_NATIVE native = Amx::getNative(name);
         if(!native)
-            return info.GetReturnValue().Set(Null(isolate));
+            return info.GetReturnValue().Set(Amx::createCallNativeResultEmpty(info));
         std::string paramTypes = *String::Utf8Value(isolate, info[1]);
         size_t paramCount = paramTypes.length();
         std::vector<void*> params(paramCount);
@@ -121,7 +146,7 @@ namespace nodesamp {
         int32_t retval = sampgdk::InvokeNativeArray(native, nativeFormat.c_str(), params.data());
         Local<Array> result = Array::New(isolate);
         Local<String> key = String::NewFromUtf8(isolate, "retval").ToLocalChecked();
-        result->Set(context, key, Integer::New(isolate, retval));
+        result->Set(context, key, Integer::New(isolate, retval)).FromMaybe(false);
         for(size_t index = 0; index < paramCount; index++) {
             char type = paramTypes[index];
             switch(type) {
@@ -135,13 +160,13 @@ namespace nodesamp {
                 case 'I': 
                 {
                     int32_t value = *(cell*)params[index];
-                    result->Set(context, result->Length(), Integer::New(isolate, value));
+                    result->Set(context, result->Length(), Integer::New(isolate, value)).FromMaybe(false);
                 }
                 break;
                 case 'F': 
                 {
                     float value = amx_ctof(*(cell*)params[index]);
-                    result->Set(context, result->Length(), Number::New(isolate, value));
+                    result->Set(context, result->Length(), Number::New(isolate, value)).FromMaybe(false);
                 } 
                 break;
                 case 'S': 
@@ -149,7 +174,7 @@ namespace nodesamp {
                     int32_t size = (int32_t)paramsStorage[index];
                     char* value = (char*)params[index];
                     value[size - 1] = '\0';
-                    result->Set(context, result->Length(), String::NewFromUtf8(isolate, Utils::ConvertCP1251ToUTF8(value).c_str()).ToLocalChecked());
+                    result->Set(context, result->Length(), String::NewFromUtf8(isolate, Utils::ConvertCP1251ToUTF8(value).c_str()).ToLocalChecked()).FromMaybe(false);
                     delete[] (char*)params[index];
                 }
                 break;
@@ -159,8 +184,8 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Integer::New(isolate, value[index]));
-                    result->Set(context, result->Length(), array);
+                        array->Set(context, vIndex, Integer::New(isolate, value[index])).FromMaybe(false);
+                    result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 }
                 break;
@@ -170,8 +195,8 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[index])));
-                    result->Set(context, result->Length(), array);
+                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[index]))).FromMaybe(false);
+                    result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 } 
                 break;
@@ -185,11 +210,11 @@ namespace nodesamp {
         Isolate* isolate = info.GetIsolate();
         HandleScope handleScope(isolate);
         if(!info[0]->IsString() || !info[0]->IsString())
-            return info.GetReturnValue().Set(Null(isolate));
+            return info.GetReturnValue().Set(Amx::createCallNativeResultEmpty(info));
         std::string name = *String::Utf8Value(isolate, info[0]);
-        AMX_NATIVE native = sampgdk::FindNative(name.c_str());
+        AMX_NATIVE native = Amx::getNative(name);
         if(!native)
-            return info.GetReturnValue().Set(Null(isolate));
+            return info.GetReturnValue().Set(Amx::createCallNativeResultEmpty(info));
         std::string paramTypes = *String::Utf8Value(isolate, info[1]);
         size_t paramCount = paramTypes.length();
         std::vector<void*> params(paramCount);
@@ -300,7 +325,7 @@ namespace nodesamp {
         int32_t retval = sampgdk::InvokeNativeArray(native, nativeFormat.c_str(), params.data());
         Local<Array> result = Array::New(isolate);
         Local<String> key = String::NewFromUtf8(isolate, "retval").ToLocalChecked();
-        result->Set(context, key, Number::New(isolate, (double)amx_ctof(retval)));
+        result->Set(context, key, Number::New(isolate, (double)amx_ctof(retval))).FromMaybe(false);
         for(size_t index = 0; index < paramCount; index++) {
             char type = paramTypes[index];
             switch(type) {
@@ -314,13 +339,13 @@ namespace nodesamp {
                 case 'I': 
                 {
                     int32_t value = *(cell*)params[index];
-                    result->Set(context, result->Length(), Integer::New(isolate, value));
+                    result->Set(context, result->Length(), Integer::New(isolate, value)).FromMaybe(false);
                 }
                 break;
                 case 'F': 
                 {
                     float value = amx_ctof(*(cell*)params[index]);
-                    result->Set(context, result->Length(), Number::New(isolate, value));
+                    result->Set(context, result->Length(), Number::New(isolate, value)).FromMaybe(false);
                 } 
                 break;
                 case 'S': 
@@ -328,7 +353,7 @@ namespace nodesamp {
                     int32_t size = (int32_t)paramsStorage[index];
                     char* value = (char*)params[index];
                     value[size - 1] = '\0';
-                    result->Set(context, result->Length(), String::NewFromUtf8(isolate, Utils::ConvertCP1251ToUTF8(value).c_str()).ToLocalChecked());
+                    result->Set(context, result->Length(), String::NewFromUtf8(isolate, Utils::ConvertCP1251ToUTF8(value).c_str()).ToLocalChecked()).FromMaybe(false);
                     delete[] (char*)params[index];
                 }
                 break;
@@ -338,8 +363,8 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Integer::New(isolate, value[index]));
-                    result->Set(context, result->Length(), array);
+                        array->Set(context, vIndex, Integer::New(isolate, value[index])).FromMaybe(false);
+                    result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 }
                 break;
@@ -349,8 +374,8 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[index])));
-                    result->Set(context, result->Length(), array);
+                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[index]))).FromMaybe(false);
+                    result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 } 
                 break;
@@ -377,15 +402,15 @@ namespace nodesamp {
             listeners = Local<Array>::Cast(events->Get(context, eventName).ToLocalChecked());
         else {
             listeners = Array::New(isolate);
-            events->Set(context, eventName, listeners);
+            events->Set(context, eventName, listeners).FromMaybe(false);
         }
         Local<Object> listener = Object::New(isolate);
         key = String::NewFromUtf8(isolate, "paramTypes").ToLocalChecked();
-        listener->Set(context, key, paramTypes);
+        listener->Set(context, key, paramTypes).FromMaybe(false);
         key = String::NewFromUtf8(isolate, "callback").ToLocalChecked();
-        listener->Set(context, key, callback);
+        listener->Set(context, key, callback).FromMaybe(false);
         uint32_t index = listeners->Length();
-        listeners->Set(context, index, listener);
+        listeners->Set(context, index, listener).FromMaybe(false);
         return info.GetReturnValue().Set(listener);
     }
 
@@ -402,7 +427,7 @@ namespace nodesamp {
         Local<Object> events = Local<Object>::Cast(amxObject->Get(context, key).ToLocalChecked());
         if(!events->Get(context, eventName).ToLocalChecked()->IsArray())
             return info.GetReturnValue().Set(False(isolate));
-        events->Delete(context, eventName);
+        events->Delete(context, eventName).FromMaybe(false);
         return info.GetReturnValue().Set(True(isolate));
     }
 
@@ -428,13 +453,13 @@ namespace nodesamp {
             Local<String> key = String::NewFromUtf8(isolate, func.first.c_str()).ToLocalChecked();
             Local<Function> value = FunctionTemplate::New(isolate, func.second)->GetFunction(context).ToLocalChecked();
             value->SetName(key);
-            amxObject->Set(context, key, value);
+            amxObject->Set(context, key, value).FromMaybe(false);
         }
         Local<String> key = String::NewFromUtf8(isolate, "publicEvents").ToLocalChecked();
         Local<Object> value = Object::New(isolate);
-        amxObject->Set(context, key, value);
+        amxObject->Set(context, key, value).FromMaybe(false);
         key = String::NewFromUtf8(isolate, "amx").ToLocalChecked();
-        context->Global()->Set(context, key, amxObject);
+        context->Global()->Set(context, key, amxObject).FromMaybe(false);
     }
 
     inline node::CommonEnvironmentSetup* Amx::getSetup() {
@@ -493,7 +518,7 @@ namespace nodesamp {
                         int32_t size = (int32_t)params[index + 2];
                         Local<Array> array = Array::New(isolate, size);
                         for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                            array->Set(context, vIndex, Integer::New(isolate, (int32_t)addr[index]));
+                            array->Set(context, vIndex, Integer::New(isolate, (int32_t)addr[index])).FromMaybe(false);
                         args[index] = array;
                     } 
                     break;
@@ -504,7 +529,7 @@ namespace nodesamp {
                         int32_t size = (int32_t)params[index + 2];
                         Local<Array> array = Array::New(isolate, size);
                         for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                            array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(addr[index])));
+                            array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(addr[index]))).FromMaybe(false);
                         args[index] = array;
                     }
                     break;

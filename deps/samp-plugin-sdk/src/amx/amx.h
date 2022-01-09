@@ -185,7 +185,7 @@ typedef int (AMXAPI *AMX_DEBUG)(struct tagAMX *amx);
 #endif
 
 #if defined __GNUC__
-  #define PACKED        __attribute__((packed))
+  #define PACKED
 #else
   #define PACKED
 #endif

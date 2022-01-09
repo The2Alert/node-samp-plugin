@@ -1,5 +1,4 @@
 #include <memory>
-#include <exception>
 #include "amx/amx.h"
 #include "plugincommon.h"
 #define SAMPGDK_AMALGAMATION
@@ -7,9 +6,13 @@
 #include "config.h"
 #include "platform.h"
 #include "logger.h"
+#include "exception.h"
 #ifdef _WIN32
 #include <direct.h>
 #define cd _chdir
+#else
+#include <unistd.h>
+#define cd chdir
 #endif
 
 std::unique_ptr<nodesamp::Config> config;
@@ -28,9 +31,9 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void** ppData) {
 		config = nodesamp::GetConfig();
 		platform = nodesamp::CreatePlatform(config->packagePath, config->nodeOptions);
 		platform->init();
-		nodesamp::log("Initialized.");
-	} catch(const std::exception& error) {
-		nodesamp::error(error.what());
+		nodesamp::Log("Initialized.");
+	} catch(const nodesamp::Exception& exception) {
+		nodesamp::Error(exception);
 	}
 	return true;
 }

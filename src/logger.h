@@ -6,9 +6,9 @@
 #include "rang.hpp"
 
 namespace nodesamp {
-    void log(std::string content);
+    void Log(std::string content);
 
-    void error(std::string error);
+    void Error(std::string error);
 }
 
 #endif
