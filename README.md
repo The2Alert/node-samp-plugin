@@ -7,6 +7,10 @@
 <p align="center">
     Runtime environment Node.js in SA-MP.
 </p>
+<p align="center">
+    <img src="https://img.shields.io/static/v1?label=version&message=1.0.0&color=yellow" />
+    <a href="https://github.com/dev2alert/node-samp-plugin/blob/main/LICENSE"><img src="https://img.shields.io/github/license/dev2alert/node-samp-plugin" /></a>
+</p>
 
 ## Description
 <p>
