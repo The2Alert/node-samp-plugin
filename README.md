@@ -39,16 +39,12 @@ Linux prerequisites:
 
 For Windows:<br />
 ```
-cd ./build
-cmake .. -A Win32
-cd ..
+cd ./build && cmake .. -A Win32 && cd ..
 make -B build
 ```
 For Linux:<br />
 ```
-cd ./build
-cmake ..
-cd ..
+cd ./build; cmake ..; cd ..
 make -B build
 ```
 
