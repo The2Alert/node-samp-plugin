@@ -1,2 +1,4 @@
-/build/*
-!/build/.gitkeep
+/build/current/*
+!/build/current/.gitkeep
+/build/linux/*
+!/build/linux/.gitkeep

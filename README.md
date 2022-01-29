@@ -37,15 +37,26 @@ Linux prerequisites:
     <li>GNU Make 4.2.1.</li>
 </ul>
 
+Linux prerequisites in other OS:
+<ul>
+    <li>Docker 20.10.8.</li>
+</ul>
+
 For Windows:<br />
 ```
-cd ./build && cmake .. -A Win32 && cd ..
+make build-win32-start
 make -B build
 ```
-For Linux:<br />
+For Linux<br />
 ```
-cd ./build; cmake ..; cd ..
+make build-start
 make -B build
+```
+
+For Linux in other OS:<br />
+```
+make build-linux-start
+make build-linux
 ```
 
 ## License
