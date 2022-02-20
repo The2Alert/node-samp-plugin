@@ -135,7 +135,7 @@ namespace nodesamp {
                     cell* value = new cell[size];
                     float fValue = 0.0;
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        value[vIndex] = amx_ftoc(vIndex);
+                        value[vIndex] = amx_ftoc(fValue);
                     params[index] = (void*)value;
                     argIndex++;
                     nativeFormat += "A[" + std::to_string(size) + "]";
@@ -184,7 +184,7 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Integer::New(isolate, value[index])).FromMaybe(false);
+                        array->Set(context, vIndex, Integer::New(isolate, value[vIndex])).FromMaybe(false);
                     result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 }
@@ -195,7 +195,7 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[index]))).FromMaybe(false);
+                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[vIndex]))).FromMaybe(false);
                     result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 } 
@@ -314,7 +314,7 @@ namespace nodesamp {
                     cell* value = new cell[size];
                     float fValue = 0.0;
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        value[vIndex] = amx_ftoc(vIndex);
+                        value[vIndex] = amx_ftoc(fValue);
                     params[index] = (void*)value;
                     argIndex++;
                     nativeFormat += "A[" + std::to_string(size) + "]";
@@ -363,7 +363,7 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Integer::New(isolate, value[index])).FromMaybe(false);
+                        array->Set(context, vIndex, Integer::New(isolate, value[vIndex])).FromMaybe(false);
                     result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 }
@@ -374,7 +374,7 @@ namespace nodesamp {
                     Local<Array> array = Array::New(isolate, size);
                     cell* value = (cell*)params[index];
                     for(int32_t vIndex = 0; vIndex < size; vIndex++)
-                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[index]))).FromMaybe(false);
+                        array->Set(context, vIndex, Number::New(isolate, (double)amx_ctof(value[vIndex]))).FromMaybe(false);
                     result->Set(context, result->Length(), array).FromMaybe(false);
                     delete[] (cell*)params[index];
                 } 
