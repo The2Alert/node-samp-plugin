@@ -25,21 +25,21 @@
 ## Building
 Windows prerequisites:
 <ul>
-    <li>Visual Studio 2019 (C / C++).</li>
-    <li>CMake 3.20.6.</li>
-    <li>GNU Make 4.3.</li>
+    <li><a href="https://visualstudio.microsoft.com/ru/downloads/">Visual Studio 2019</a> (C / C++)</li>
+    <li><a href="https://cmake.org/">CMake</a> >= <code>3.20.6</code></li>
+    <li><a href="https://www.gnu.org/software/make/">GNU Make</a> >= <code>4.3</code></li>
 </ul>
 
 Linux prerequisites:
 <ul>
-    <li>GCC / G++ 9.3.0.</li>
-    <li>CMake 3.16.3.</li>
-    <li>GNU Make 4.2.1.</li>
+    <li><a href="https://gcc.gnu.org/">GCC / G++</a> >= <code>9.3.0</code></li>
+    <li><a href="https://cmake.org/">CMake</a> >= <code>3.16.3</code></li>
+    <li><a href="https://www.gnu.org/software/make/">GNU Make<a> >= <code>4.2.1</code></li>
 </ul>
 
 Linux prerequisites in other OS:
 <ul>
-    <li>Docker 20.10.8.</li>
+    <li><a href="https://www.docker.com/">Docker</a> >= <code>20.10.8</code></li>
 </ul>
 
 For Windows:<br />
