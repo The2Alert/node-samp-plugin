@@ -38,7 +38,7 @@ namespace nodesamp {
             return info.GetReturnValue().Set(Amx::createCallNativeResultEmpty(info));
         std::string paramTypes = *String::Utf8Value(isolate, info[1]);
         size_t paramCount = paramTypes.length();
-        std::vector<void*> params(paramCount);
+        std::vector<void*> params(paramCount != 0 ? paramCount : 1);
         std::vector<cell> paramsStorage(paramCount);
         Local<Context> context = isolate->GetCurrentContext();
         int argIndex = 2;
@@ -217,7 +217,7 @@ namespace nodesamp {
             return info.GetReturnValue().Set(Amx::createCallNativeResultEmpty(info));
         std::string paramTypes = *String::Utf8Value(isolate, info[1]);
         size_t paramCount = paramTypes.length();
-        std::vector<void*> params(paramCount);
+        std::vector<void*> params(paramCount != 0 ? paramCount : 1);
         std::vector<cell> paramsStorage(paramCount);
         Local<Context> context = isolate->GetCurrentContext();
         int argIndex = 2;
