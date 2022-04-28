@@ -2,19 +2,19 @@
 #define NODESAMP_CONFIG_H
 
 #include <vector>
-#include <memory>
 #include <string>
-#include <fstream>
-#include "json.hpp"
-#include "utils.h"
-#include "exception.h"
-
-using json = nlohmann::json;
+#include <memory>
 
 namespace nodesamp {
     struct Config {
-        std::string packagePath;
         std::vector<std::string> nodeOptions;
+        std::string path;
+        std::vector<std::string> nodeArgs;
+    };
+
+    class ConfigException: public std::string {
+        public:
+            ConfigException(std::string message);
     };
 
     std::unique_ptr<Config> GetConfig();

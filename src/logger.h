@@ -2,13 +2,21 @@
 #define NODESAMP_LOGGER_H
 
 #include <string>
-#include <iostream>
-#include "rang.hpp"
 
 namespace nodesamp {
-    void Log(std::string content);
+    namespace Logger {
+        void Init();
 
-    void Error(std::string error);
+        void Error(std::string content);
+
+        void Debug(std::string content);
+
+        namespace Config {
+            void Error(std::string content);
+        }
+    }
+
+    void Log(std::string content);
 }
 
 #endif

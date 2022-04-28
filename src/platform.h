@@ -1,37 +1,38 @@
 #ifndef NODESAMP_PLATFORM_H
 #define NODESAMP_PLATFORM_H
 
-#include <vector>
 #include <string>
+#include <vector>
 #include <memory>
 #include "v8.h"
 #include "node.h"
-#include "module.h"
+#include "env.h"
+#include <malloc.h>
+#include "amx/amx.h"
 
 namespace nodesamp {
     class Platform {
-        public:
-            typedef std::vector<std::string> Args;
+        friend std::unique_ptr<Platform> InitPlatform(const std::vector<std::string>& options, std::string path, const std::vector<std::string>& args);
+        friend class Environment;
         private:
-            Args args;
-            Args execArgs;
+            std::string path;
+            std::vector<std::string> args;
             std::unique_ptr<node::MultiIsolatePlatform> platform;
-            std::unique_ptr<Module> module;
-        public:
-            Platform(std::string packagePath, const std::vector<std::string>& options);
+            std::unique_ptr<Environment> defaultEnv;
 
+            Platform(const std::vector<std::string>& options, std::string path, const std::vector<std::string>& args);
+    
             void init();
-            Args& getArgs();
-            Args& getExecArgs();
-            node::MultiIsolatePlatform* getPlatform();
-            void initModule();
-            Module* getModule();
-            void uninitModule();
+        public:
+            Environment* loadDefaultEnv();
+            Environment* getDefaultEnv();
+            void stopDefaultEnv();
             void tick();
+            void callAmxPublic(AMX* amx, std::string name, cell* params, cell* retval);
             void uninit();
     };
 
-    std::unique_ptr<Platform> CreatePlatform(std::string packagePath, const std::vector<std::string>& options);
+    std::unique_ptr<Platform> InitPlatform(const std::vector<std::string>& options, std::string path, const std::vector<std::string>& args);
 }
 
 #endif

@@ -1,5 +1,5 @@
 #include "exception.h"
 
 namespace nodesamp {
-    Exception::Exception(std::string exception): std::string(exception) {}
+    Exception::Exception(std::string message): std::string(message) {}
 }

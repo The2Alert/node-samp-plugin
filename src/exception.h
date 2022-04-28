@@ -6,8 +6,8 @@
 namespace nodesamp {
     class Exception: public std::string {
         public:
-            Exception(std::string exception);
+            Exception(std::string message);
     };
 }
 
-#endif 
+#endif

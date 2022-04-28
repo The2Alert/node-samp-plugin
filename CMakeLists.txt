@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(node-samp-plugin)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/deps/cmake")
 include(AddSAMPPlugin)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 include_directories(
     "${PROJECT_SOURCE_DIR}/deps/samp-plugin-sdk/src"
     "${PROJECT_SOURCE_DIR}/deps/sampgdk/src"
